@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Connexion — Baromètre Coopératif</title>
+<style>
+  :root{--bg:#f6f8fb; --panel:#ffffff; --ink:#1f2a44; --muted:#6b7280; --accent:#5b7cfa; --shadow:0 6px 20px rgba(0,0,0,.08)}
+  html,body{height:100%}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,Segoe UI,Roboto,Arial}
+  .wrap{display:grid; place-items:center; height:100%}
+  .card{background:var(--panel); padding:22px; border-radius:16px; box-shadow:var(--shadow); width:min(420px, 92vw); display:grid; gap:12px}
+  h1{margin:.2rem 0 6px 0}
+  label{font-size:.9rem; color:var(--muted)}
+  input{width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:10px; font:inherit}
+  button{padding:10px 12px; border-radius:12px; border:1px solid transparent; background:var(--accent); color:#fff; font-weight:700; cursor:pointer}
+  .err{color:#b91c1c; font-size:.9rem; min-height:1.2em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Connexion</h1>
+    <p class="muted">Entre le nom de ta classe et le PIN fourni par l'enseignant.</p>
+    <label>Classe</label>
+    <input id="klass" placeholder="Ex: P4-2025" />
+    <label>PIN</label>
+    <input id="pin" type="password" placeholder="Ex: 1234" />
+    <div class="err" id="err"></div>
+    <button id="go">Se connecter</button>
+  </div>
+</div>
+<script>
+  const $ = s => document.querySelector(s);
+  $('#go').addEventListener('click', async ()=>{
+    const klass = $('#klass').value.trim();
+    const pin = $('#pin').value.trim();
+    $('#err').textContent = '';
+    if(!klass || !pin){ $('#err').textContent='Classe et PIN requis.'; return; }
+    try{
+      const r = await fetch('/api/login', { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({class:klass, pin}) });
+      const data = await r.json();
+      if(!data.ok){ $('#err').textContent = 'PIN invalide.'; return; }
+      localStorage.setItem('baro.class', klass);
+      localStorage.setItem('baro.pin', pin);
+      location.href = '/public/index.html';
+    }catch(e){
+      $('#err').textContent = 'Erreur de connexion.';
+    }
+  });
+</script>
+</body>
+</html>
