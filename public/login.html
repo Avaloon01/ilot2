@@ -42,7 +42,7 @@
       const r = await fetch('/api/auth/login', { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({email, password}) });
       const data = await r.json();
       if(!data.ok){ $('#err').textContent = data.error || 'Identifiants invalides.'; return; }
-      location.href = '/public/index.html';
+      location.href = '/index.html';
     }catch(e){ $('#err').textContent='Erreur réseau.'; }
   });
 </script>
