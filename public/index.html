@@ -189,7 +189,9 @@
 (function(){
   // Check session
   fetch('/api/state').then(async r=>{
-    if(r.status === 401){ location.href='/public/login.html'; }
+    if (r.status === 401 && !location.pathname.endsWith('/login.html')) {
+  location.href = '/login.html';
+}
   }).catch(()=>{});
 
   const LOCAL_STORAGE_KEY = 'coop.barometre.v2.local';
