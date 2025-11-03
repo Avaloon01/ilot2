@@ -28,7 +28,7 @@
     <input id="password" type="password" placeholder="min 8 caractères" />
     <div class="err" id="err"></div>
     <button id="go">Créer</button>
-    <div>Déjà un compte ? <a href="/public/login.html">Se connecter</a></div>
+    <div>Déjà un compte ? <a href="/login.html">Se connecter</a></div>
   </div>
 </div>
 <script>
@@ -42,7 +42,7 @@
       const r = await fetch('/api/auth/register', { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({email, password}) });
       const data = await r.json();
       if(!data.ok){ $('#err').textContent = data.error || 'Erreur.'; return; }
-      location.href = '/public/login.html';
+      location.href = '/login.html';
     }catch(e){ $('#err').textContent='Erreur réseau.'; }
   });
 </script>
