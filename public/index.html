@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Baromètre Coopératif — Cloud (KV)</title>
+<title>Baromètre — Mon compte</title>
 <style>
   :root{
     --bg:#f6f8fb; --panel:#ffffff; --ink:#1f2a44; --muted:#6b7280; --accent:#5b7cfa;
@@ -23,10 +23,10 @@
   .panel{background:var(--panel); border-radius:16px; box-shadow:var(--shadow)}
   .sidebar{padding:14px}
   .sidebar h2{font-size:1rem; margin:10px 6px; color:var(--muted)}
-  .btn{appearance:none; border:1px solid #e5e7eb; background:#fff; color:var(--ink); padding:10px 12px; border-radius:12px; cursor:pointer; font-weight:600}
+  .btn{appearance:none; border:1px solid #e5e7eb; background:#fff; color:#fff; padding:10px 12px; border-radius:12px; cursor:pointer; font-weight:600}
   .btn:hover{box-shadow:0 2px 10px rgba(0,0,0,.06)}
-  .btn.primary{background:var(--accent); color:#fff; border-color:transparent}
-  .btn.ghost{background:transparent; border-color:transparent; color:var(--muted)}
+  .btn.primary{background:var(--accent); border-color:transparent}
+  .btn.ghost{background:transparent; border-color:transparent; color:#1f2a44}
   .btn.icon{display:inline-flex; align-items:center; gap:8px}
   .btn.small{padding:6px 8px; font-size:.9rem; border-radius:10px}
   .btn.round{border-radius:999px; width:36px; height:36px; display:inline-grid; place-items:center}
@@ -46,27 +46,26 @@
   .roles{display:grid; gap:6px}
   .roles label{font-size:.85rem; color:var(--muted)}
   .roles .row{display:grid; grid-template-columns: 1fr 1fr; gap:8px}
-  input[type="text"], select, input[type="number"]{width:100%; border:1px solid #e5e7eb; border-radius:10px; padding:8px 10px; font-size:1rem; background:#fff}
+  input[type="text"], select, input[type="number"]{width:100%; border:1px solid #e5e7eb; border-radius:10px; padding:8px 10px; font-size:1rem; background:#fff; color:#1f2a44}
   .members{display:flex; flex-wrap:wrap; gap:6px}
   .chip{background:#f3f4f6; color:#111827; padding:5px 9px; border-radius:999px; font-size:.85rem}
   .muted{color:var(--muted); font-size:.9rem}
   .footer-actions{display:flex; justify-content:space-between; align-items:center}
   .hint{font-size:.85rem; color:var(--muted)}
   .timer{display:flex; align-items:center; gap:8px}
-  .time{font-variant-numeric:tabular-nums; font-weight:800; font-size:1.3rem}
+  .time{font-variant-numeric:tabular-nums; font-weight:800; font-size:1.3rem; color:#1f2a44}
   .chart{height:220px; background:#fff; border-radius:14px; box-shadow:var(--shadow); padding:10px}
   .section{padding:10px}
   .flex{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-  .danger{background:#fee2e2; color:#b91c1c; border-color:#fecaca}
-  .success{background:#dcfce7; color:#166534; border-color:#bbf7d0}
-  .notice{background:#e0e7ff; color:#3730a3; border-color:#c7d2fe}
+  .danger{background:#ef4444; color:#fff; border-color:#fecaca}
+  .success{background:#10b981; color:#fff; border-color:#bbf7d0}
+  .notice{background:#5b7cfa; color:#fff; border-color:#c7d2fe}
   .scroll{max-height:60vh; overflow:auto; padding-right:6px}
   .sr{position:absolute; left:-9999px}
   .divider{height:1px; background:#e5e7eb; margin:12px 0}
   .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:.85rem; background:#f3f4f6; border:1px solid #e5e7eb; border-radius:6px; padding:2px 6px}
   @media (max-width: 960px){ .app{grid-template-columns:1fr} }
 
-  /* Feu tricolore (barre du haut) */
   .classlight{display:flex; gap:8px; align-items:center; padding:6px 10px; border:1px solid #e5e7eb; border-radius:999px; background:#fff}
   .classlight .label{font-size:.9rem; color:#374151; font-weight:700; margin-right:4px}
   .classlight .light{ width:22px; height:22px; border-radius:999px; border:none; cursor:pointer; display:inline-block;
@@ -78,12 +77,10 @@
   .classlight .light.active{box-shadow:0 0 0 3px rgba(0,0,0,.06), inset 0 -2px 0 rgba(0,0,0,.2)}
   .classlight .tip{font-size:.8rem; color:#6b7280; margin-left:4px}
 
-  /* Modes de fond (utilise variables) */
   body.mode-talk{    --bg: green;  }
   body.mode-whisper{ --bg: orange; }
   body.mode-silent{  --bg: red;    }
 
-  /* Décibelmètre */
   .noise{background:var(--panel); border-radius:12px; box-shadow:var(--shadow); padding:10px}
   .noise .gauge{height:18px; background:#eef2f7; border-radius:999px; overflow:hidden; position:relative}
   .noise .gauge > span{display:block; height:100%; width:0%; background:linear-gradient(90deg,#3b82f6,#10b981,#f59e0b,#ef4444)}
@@ -95,7 +92,7 @@
 <body>
   <div class="app" id="app">
     <header>
-      <h1>🌟 Baromètre coopératif <span class="badge">Cloud</span></h1>
+      <h1>🌟 Baromètre coopératif <span class="badge">Mon compte</span></h1>
       <div class="toolbar">
         <div class="classlight" id="classLight" title="Vert=parler • Orange=chuchoter • Rouge=silence">
           <span class="label">Feu</span>
@@ -113,8 +110,7 @@
           <button class="btn round" id="resetTimer" title="Réinitialiser">↺</button>
         </div>
 
-        <div class="muted" id="classBadge" style="font-weight:700"></div>
-        <button class="btn" id="logout">Se déconnecter</button>
+        <button class="btn" id="logout">Déconnexion</button>
 
         <button class="btn icon" id="saveSession" title="Enregistrer l'état des étoiles comme une séance">💾 Enregistrer séance</button>
         <button class="btn icon" id="exportJSON" title="Exporter configuration et historique">⬇️ Export</button>
@@ -191,75 +187,41 @@
 
 <script>
 (function(){
-  // ---------- Auth (classe + PIN) ----------
-  const klass = localStorage.getItem('baro.class');
-  const pin = localStorage.getItem('baro.pin');
-  if(!klass || !pin){ location.href = '/public/login.html'; return; }
-  document.getElementById('classBadge').textContent = 'Classe : ' + klass;
-  document.getElementById('logout').addEventListener('click', ()=>{
-    localStorage.removeItem('baro.class'); localStorage.removeItem('baro.pin'); location.href='/public/login.html';
-  });
+  // Check session
+  fetch('/api/state').then(async r=>{
+    if(r.status === 401){ location.href='/public/login.html'; }
+  }).catch(()=>{});
 
-  // ---------- State & Persistence (Cloud) ----------
-  const LOCAL_STORAGE_KEY = 'coop.barometre.v2.local'; // pour backup local/graph bruit
+  const LOCAL_STORAGE_KEY = 'coop.barometre.v2.local';
   const $ = sel => document.querySelector(sel);
   const $$ = sel => Array.from(document.querySelectorAll(sel));
-
-  let state = {
-    groups: [], history: [], lastId: 0, mode: null
-  };
-
-  function saveLocalBackup(){
-    // backup local minimal (utile si offline)
-    try { localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state)); } catch {}
-  }
+  let state = { groups:[], history:[], lastId:0, mode:null };
 
   async function loadFromCloud(){
-    const r = await fetch('/api/state?class=' + encodeURIComponent(klass));
+    const r = await fetch('/api/state');
+    if(r.status===401){ location.href='/public/login.html'; return; }
     const data = await r.json();
-    if(data?.ok){
-      state = Object.assign(state, data.state||{});
-      saveLocalBackup();
-      render();
-      if(state.mode) applyMode(state.mode);
-    }else{
-      toast('⚠️ Impossible de charger l’état en ligne.');
-      // fallback éventuel sur backup local
-      const backup = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if(backup){ try{ state = JSON.parse(backup); render(); if(state.mode) applyMode(state.mode);}catch{} }
-    }
+    if(data?.ok){ state = Object.assign(state, data.state||{}); saveLocalBackup(); render(); if(state.mode) applyMode(state.mode); }
   }
-
-  let saveTimer = null;
-  function saveToCloudDebounced(){
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(saveToCloud, 500);
-  }
-
+  function saveLocalBackup(){ try{ localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state)); }catch{} }
+  let saveTimer=null;
+  function saveToCloudDebounced(){ clearTimeout(saveTimer); saveTimer=setTimeout(saveToCloud, 500); }
   async function saveToCloud(){
     try{
-      const body = JSON.stringify({
-        groups: state.groups, history: state.history, lastId: state.lastId, mode: state.mode
-      });
-      const r = await fetch('/api/state?class=' + encodeURIComponent(klass), {
-        method:'PUT',
-        headers:{ 'content-type':'application/json', 'X-Class-Pin': pin },
-        body
-      });
-      const data = await r.json();
-      if(!data.ok){ throw new Error(data.error||'save failed'); }
-    }catch(e){
-      console.warn('save error', e);
-      toast('⚠️ Sauvegarde en ligne impossible (PIN ? Réseau ?).');
-    }
+      const r = await fetch('/api/state', { method:'PUT', headers:{'content-type':'application/json'}, body: JSON.stringify(state) });
+      const data = await r.json(); if(!data.ok) throw new Error(data.error||'save failed');
+    }catch(e){ console.warn('save error', e); toast('⚠️ Sauvegarde en ligne impossible.'); }
   }
 
-  // ---------- Utilities ----------
+  $('#logout').addEventListener('click', async ()=>{
+    await fetch('/api/auth/logout', { method:'POST' });
+    location.href = '/public/login.html';
+  });
+
   function uid(){ state.lastId++; return state.lastId; }
-  function el(tag, attrs={}, ...children){ const n = document.createElement(tag); for(const k in attrs){ if(k==='class') n.className=attrs[k]; else if(k==='html') n.innerHTML=attrs[k]; else n.setAttribute(k, attrs[k]); } children.forEach(c=> n.append(c)); return n; }
+  function el(tag, attrs={}, ...children){ const n=document.createElement(tag); for(const k in attrs){ if(k==='class') n.className=attrs[k]; else if(k==='html') n.innerHTML=attrs[k]; else n.setAttribute(k, attrs[k]); } children.forEach(c=> n.append(c)); return n; }
   function fmtTime(sec){ const m=Math.floor(sec/60).toString().padStart(2,'0'); const s=(sec%60).toString().padStart(2,'0'); return `${m}:${s}`; }
 
-  // ---------- Confetti ----------
   const confettiCanvas = $('#confetti');
   const ctxC = confettiCanvas.getContext('2d');
   function resizeConfetti(){ confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight; }
@@ -288,26 +250,18 @@
     if(confettiPieces.length) confettiRAF = requestAnimationFrame(step);
   }
 
-  // ---------- Timer ----------
-  const minutesInput = $('#minutes');
-  const timeLabel = $('#time');
-  const startStopBtn = $('#startStop');
-  const resetTimerBtn = $('#resetTimer');
+  const minutesInput = $('#minutes'); const timeLabel = $('#time'); const startStopBtn = $('#startStop'); const resetTimerBtn = $('#resetTimer');
   let remaining = parseInt(minutesInput.value||0)*60; let ticking=false;
-
   function drawTime(){ timeLabel.textContent = fmtTime(remaining); }
-  function tick(){ if(!ticking) return; remaining = Math.max(remaining-1,0); drawTime(); if(remaining===0){ ticking=false; startStopBtn.textContent='▶︎'; beep(); launchConfetti(innerWidth/2, 120);} else { setTimeout(()=>requestAnimationFrame(tick), 1000);} }
+  function tick(){ if(!ticking) return; remaining=Math.max(remaining-1,0); drawTime(); if(remaining===0){ ticking=false; startStopBtn.textContent='▶︎'; beep(); launchConfetti(innerWidth/2, 120);} else { setTimeout(()=>requestAnimationFrame(tick), 1000);} }
   function beep(){ try{ const a=new AudioContext(); const o=a.createOscillator(); const g=a.createGain(); o.type='triangle'; o.frequency.value=880; o.connect(g); g.connect(a.destination); g.gain.setValueAtTime(0.001, a.currentTime); g.gain.exponentialRampToValueAtTime(0.4, a.currentTime+0.05); o.start(); setTimeout(()=>{ g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime+0.4); o.stop(a.currentTime+0.45); }, 400); }catch(e){} }
-
   minutesInput.addEventListener('change', ()=>{ remaining = parseInt(minutesInput.value||0)*60; drawTime(); saveToCloudDebounced(); });
   startStopBtn.addEventListener('click', ()=>{ ticking=!ticking; startStopBtn.textContent = ticking ? '⏸' : '▶︎'; if(ticking) tick(); });
   resetTimerBtn.addEventListener('click', ()=>{ ticking=false; startStopBtn.textContent='▶︎'; remaining = parseInt(minutesInput.value||0)*60; drawTime(); });
 
   drawTime();
 
-  // ---------- Feu tricolore ----------
-  const lightBox = $('#classLight');
-  const body = document.body;
+  const lightBox = $('#classLight'); const body = document.body;
   function applyMode(mode){
     body.classList.remove('mode-talk','mode-whisper','mode-silent');
     $$('#classLight .light').forEach(b=> b.classList.remove('active'));
@@ -316,13 +270,9 @@
     else if(mode === 'silent'){ body.classList.add('mode-silent'); lightBox.querySelector('[data-mode="silent"]').classList.add('active'); toast('🔴 Silence.'); }
     state.mode = mode || null; saveLocalBackup(); saveToCloudDebounced();
   }
-  lightBox.addEventListener('click', (e)=>{
-    const btn = e.target.closest('.light'); if(!btn) return;
-    applyMode(btn.getAttribute('data-mode'));
-  });
+  lightBox.addEventListener('click', (e)=>{ const btn = e.target.closest('.light'); if(!btn) return; applyMode(btn.getAttribute('data-mode')); });
   document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ state.mode=null; applyMode(null); } });
 
-  // ---------- Groups UI ----------
   const groupsRoot = $('#groups');
   const DEFAULT_ROLES = ['Porte-parole','Vérificateur','Secrétaire','Gardien du temps','Animateur bienveillance'];
   const PRAISES = ["Super écoute !","Excellente explication !","Belle coopération !","On s'encourage, bravo !","Vous avez comparé vos idées, top !","Conflit cognitif réussi !","Merci d'avoir reformulé."];
@@ -403,15 +353,11 @@
       delBtn.addEventListener('click',()=>{ if(confirm('Supprimer cet îlot ?')) deleteGroup(g.id); });
       foot.append(speakBtn, el('span',{class:'hint'},'Niveau : '+COLOR_LABEL[g.color]), el('div',{class:'flex'}, selectBtn, delBtn));
 
-      card.addEventListener('click', (e)=>{ if(e.target.tagName!=='INPUT' && e.target.tagName!=='SELECT' && !e.target.closest('button')){ setSelected(g.id); saveLocalBackup(); }});
-
-      groupsRoot.append(card);
       groupsRoot.append(card);
     });
     renderChart();
   }
 
-  // ---------- Sidebar actions ----------
   $('#addGroup').addEventListener('click', ()=>{
     const name = $('#newGroupName').value.trim();
     const members = $('#newGroupMembers').value.trim();
@@ -421,7 +367,6 @@
     if(state.groups.length){
       return toast('Déjà configuré. Vide d’abord avec 🗑️ Réinitialiser pour créer de nouveaux groupes aléatoires.');
     }
-    // petite répartition 5/5/5/6 avec ajout au dernier si surplus
     const a = STUDENTS.slice();
     for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
     const sizes=[5,5,5,6]; let i=0; const groups=[];
@@ -438,9 +383,7 @@
     state = {groups:[], history:[], lastId:0, mode:null}; saveLocalBackup(); saveToCloudDebounced(); render(); applyMode(null);
   });
 
-  // ---------- Session history & Chart ----------
-  const chartCanvas = $('#historyChart');
-  const legend = $('#historyLegend');
+  const chartCanvas = $('#historyChart'); const legend = $('#historyLegend');
   function saveSession(){
     if(!state.groups.length) return toast('Ajoute des îlots d’abord.');
     const scores={}; state.groups.forEach(g=> scores[g.id]=g.stars);
@@ -492,19 +435,15 @@
     legend.innerHTML = state.groups.map(g=> `<span style="display:inline-flex;align-items:center;gap:6px;margin-right:10px"><span style="width:12px;height:12px;border-radius:999px;background:${colors[g.id]}"></span>${g.name}</span>`).join('');
   }
 
-  // ---------- Toast feedback ----------
   let toastTimer; function toast(msg){
     let t = $('#toast'); if(!t){ t = el('div',{id:'toast'}); document.body.append(t); }
     t.textContent = msg; Object.assign(t.style, {
       position:'fixed', left:'50%', top:'20px', transform:'translateX(-50%)', background:'#111827', color:'#fff', padding:'10px 14px', borderRadius:'10px', boxShadow:'var(--shadow)', zIndex:9999, opacity:'0'
     });
     t.animate([{opacity:0, transform:'translate(-50%,-10px)'},{opacity:1, transform:'translate(-50%,0)'}], {duration:160, fill:'forwards'});
-    clearTimeout(toastTimer); toastTimer = setTimeout(()=>{
-      t.animate([{opacity:1},{opacity:0}],{duration:220, fill:'forwards'});
-    }, 1800);
+    clearTimeout(toastTimer); toastTimer = setTimeout(()=>{ t.animate([{opacity:1},{opacity:0}],{duration:220, fill:'forwards'}); }, 1800);
   }
 
-  // ---------- Audio / Décibelmètre (local only) ----------
   const dbEl = $('#dbValue'), barEl = $('#noiseBar'), statusEl = $('#micStatus');
   const startMicBtn = $('#startMic'), stopMicBtn = $('#stopMic');
   const thresholdInput = $('#noiseThreshold'), autoQuiet = $('#autoQuiet'), calOffsetInput = $('#calOffset');
@@ -552,10 +491,9 @@
     const wall=Date.now(); if(!lastSampleAt || wall - lastSampleAt >= SAMPLE_MS){
       noiseData.push([wall, db]); const cutoff=wall-HISTORY_MS; while(noiseData.length && noiseData[0][0] < cutoff) noiseData.shift(); drawNoiseChart(); lastSampleAt=wall;
     }
-    rafNoise = requestAnimationFrame(loopNoise);
+    requestAnimationFrame(loopNoise);
   }
 
-  // ---------- Keyboard shortcuts ----------
   document.addEventListener('keydown', (e)=>{
     const g = state.groups.find(x=> x.selected);
     if(e.code==='Space'){ e.preventDefault(); startStopBtn.click(); }
@@ -565,7 +503,6 @@
     if(e.key.toLowerCase()==='c'){ cycleColor(g); }
   });
 
-  // ---------- Export / Import ----------
   $('#exportJSON').addEventListener('click', ()=>{
     const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'barometre_cooperatif.json'; a.click();
@@ -576,7 +513,6 @@
     e.target.value = '';
   });
 
-  // ---------- Initial load ----------
   loadFromCloud();
 })();
 </script>

@@ -1,49 +1,28 @@
-# Baromètre Coopératif — Cloudflare Pages + KV (stockage en ligne)
+# Baromètre Coopératif — Pages Functions + KV — Auth Email/Mot de passe
 
-Ce paquet fournit :
-- `public/login.html` : page de connexion (choix de la classe + PIN).
-- `public/index.html` : l'app complète (feu tricolore, îlots, étoiles, graph bruit).
-- `functions/api/login.js` : vérifie le PIN de la classe.
-- `functions/api/state.js` : lit/écrit l'état {groups, stars, mode, history} dans **Cloudflare KV**.
+## Contenu
+- `public/signup.html` : création de compte (email + mot de passe)
+- `public/login.html` : connexion
+- `public/index.html` : l’application (feu tricolore, îlots, étoiles, graph bruit local)
+- `functions/api/auth/register.js` : inscription (hash PBKDF2 + enregistrement KV)
+- `functions/api/auth/login.js` : connexion (vérif + cookie de session signé HMAC)
+- `functions/api/auth/logout.js` : déconnexion (clear cookie)
+- `functions/api/state.js` : lecture/écriture de l’état par utilisateur (protégé par session)
 
-## Déploiement sur Cloudflare Pages (recommandé)
+## Bindings à configurer (Pages → Settings → Functions → Bindings)
+- **KV Namespace** : `BARO` (créez un namespace KV, ex. `barometre-users`)
+- **Environment variable** : `SESSION_SECRET` (une longue valeur aléatoire, min 32 caractères)
 
-1. **Crée un nouveau projet Pages** et envoie ce dossier tel quel.
-2. Dans les paramètres **Pages → Functions → KV Bindings**, ajoute une liaison :
-   - Variable name: `BARO`
-   - KV Namespace: crée/en choisis une, par ex. `barometre-coop`
-3. **Ajoute tes classes et PINs** dans la KV (depuis le Dashboard → KV → `barometre-coop` → ajoute des paires clé/valeur) :
-   - Clé : `auth:CLASSE_X`  Valeur : `1234`  (exemple)
-   - Tu peux mettre autant de classes que tu veux : `auth:CM2A`, `auth:P4-2025`, etc.
-4. Ouvre l’URL de Pages, va sur `/public/login.html`, saisis `CLASSE_X` et le PIN (ex. `1234`).
+## Stockage KV
+- Utilisateurs : clé `user:<email>` → JSON `{"id": "<uuid>", "email":"...", "pwd":"pbkdf2$100000$<salt_b64>$<hash_b64>"}`
+- État : clé `state:<userId>` → JSON `{groups, history, lastId, mode}`
 
-> Remarque : `GET /api/state?class=CLASSE_X` est public (lecture seule pour afficher aux élèves si tu veux).
-> L’écriture nécessite l’en‑tête `X-Class-Pin` correct ; l’interface ajoute cet en‑tête automatiquement après connexion.
+## Sécurité
+- Hash PBKDF2 (100k itérations, SHA-256) avec sel aléatoire via WebCrypto.
+- Cookie HttpOnly, Secure, SameSite=Lax, signé HMAC-SHA256 (`SESSION_SECRET`).
+- Aucune donnée son n’est envoyée côté serveur (graph local uniquement).
 
-## Alternative : Wrangler (Worker)
-
-Un `wrangler.toml` minimal serait :
-```toml
-name = "barometre-coop"
-main = "./functions/api/state.js"
-
-[[kv_namespaces]]
-binding = "BARO"
-id = "<KV_NAMESPACE_ID>"
-```
-Mais pour Pages, tu n’en as pas besoin.
-
-## Sécurité simple
-- Un **PIN par classe** stocké dans KV sous la clé `auth:<classe>`.
-- Les opérations d’écriture vérifient `X-Class-Pin`. La **lecture** reste ouverte pour la praticité.
-- Si tu veux verrouiller la lecture : modifie `state.js` (GET) pour valider le PIN.
-
-## Données enregistrées en ligne
-- `groups`, `history`, `lastId`, `mode` (dans la clé KV `state:<classe>`).  
-**Le graphique du son reste local** (aucun envoi).
-
-## Personnalisation
-- La classe active est affichée en haut à droite, avec un bouton « Se déconnecter ».
-- Le feu tricolore et l’interface restent identiques à ta version précédente.
-
-Bon déploiement !
+## Déploiement
+1) Créez le projet Pages (upload ce dossier). Output dir: `public`.
+2) Ajoutez le binding KV `BARO` et la variable `SESSION_SECRET`.
+3) Déployez. Accédez à `/public/signup.html` puis `/public/login.html` → `/public/index.html`.
