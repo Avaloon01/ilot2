@@ -1,7 +1,3 @@
-// functions/api/state.js
-// Synchro Cloud (KV) avec UID canonique + migration automatique des anciennes clés.
-// Clé finale utilisée :  user:<uid>:state
-
 export const onRequestGet = async ({ request, env }) => {
   const { uid, raw, emailGuess } = await getUserIdentity(request);
   if (!uid) return json({ ok: false, unauthorized: true }, 401);
@@ -9,7 +5,6 @@ export const onRequestGet = async ({ request, env }) => {
   const canonicalKey = `user:${uid}:state`;
   let val = await env.BARO.get(canonicalKey);
 
-  // Migration douce : si la clé canonique est absente, on tente d'anciennes clés
   if (!val) {
     const candidates = new Set();
     if (raw) {
@@ -56,7 +51,6 @@ export const onRequestPut = async ({ request, env }) => {
   return json({ ok: true });
 };
 
-/* ------------------ Helpers ------------------ */
 
 function readCookie(request, name) {
   const m = (request.headers.get("Cookie") || "").match(
@@ -65,8 +59,6 @@ function readCookie(request, name) {
   return m ? decodeURIComponent(m[1]) : null;
 }
 
-// Construit un UID *stable* (SHA-256) à partir de l'email si dispo, sinon du cookie brut.
-// Supporte aussi un JWT (on tente d'en extraire email/sub).
 async function getUserIdentity(request) {
   // Essaie plusieurs noms de cookie possibles
   const raw =
@@ -77,10 +69,8 @@ async function getUserIdentity(request) {
 
   let emailGuess = null;
 
-  // Cas 1 : email clair
   if (raw.includes("@")) emailGuess = raw.toLowerCase().trim();
 
-  // Cas 2 : JWT (on lit le payload pour chercher email/sub)
   if (!emailGuess && raw.split(".").length === 3) {
     try {
       const b64 = raw.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
@@ -90,7 +80,6 @@ async function getUserIdentity(request) {
     } catch { /* ignore */ }
   }
 
-  // UID canonique = SHA-256(emailGuess || raw)
   const base = emailGuess || raw;
   const uid = await sha256Hex(base);
   return { uid, raw, emailGuess };
