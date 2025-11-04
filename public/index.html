@@ -70,13 +70,20 @@
   .noise small{color:var(--muted)}
 
   /* --- Feu tricolore (fond global) --- */
-  .traffic{display:flex; align-items:center; gap:8px}
-  .light{width:18px; height:18px; border-radius:999px; border:2px solid #0b0f1a22; cursor:pointer; box-shadow:0 0 0 2px #fff}
-  .light.red{background:#ffe2e2}
-  .light.yellow{background:#fff2cc}
-  .light.green{background:#dcfce7}
-  .light.blue{background:#e8f0ff}
-  .light.active{outline:3px solid #9aa6ff66}
+.traffic{display:flex;align-items:center;gap:10px}
+.traffic span.label{font-weight:600}
+
+.light{
+  width:22px;height:22px;border-radius:999px;cursor:pointer;
+  border:none;outline:none;
+  box-shadow:0 0 0 2px #fff, 0 0 0 4px rgba(0,0,0,.06);
+}
+.light.active{box-shadow:0 0 0 2px #fff, 0 0 0 6px rgba(0,0,0,.10)}
+
+.light.green { background:#00C853; }   /* vrai vert */
+.light.orange{ background:#FF9800; }   /* vrai orange */
+.light.red   { background:#F44336; }   /* vrai rouge */
+.light.neutral{ background:#9E9E9E; }  /* neutre (gris) */
 </style>
 <link rel="stylesheet" href="/hotfix.css?v=20251104">
 </head>
@@ -183,13 +190,42 @@
   }).catch(_=>{});
 
   // --- Feu tricolore (fond global) ---
-  const FEU_KEY = 'coop.feu.bg';
-  const lights = Array.from(document.querySelectorAll('.light'));
-  function setBG(v){
-    document.documentElement.style.setProperty('--bg', v);
-    localStorage.setItem(FEU_KEY, v);
-    lights.forEach(b=> b.classList.toggle('active', b.getAttribute('data-bg')===v));
-  }
+const FEU_KEY = 'coop.feu.bg';
+
+// Choix des fonds (deux options : A doux = fond pastel, B vif = fond 100%)
+// 💡 Tu peux basculer entre A et B en changeant "FOND" plus bas.
+const FONDS_PASTEL = {
+  neutral: '#E3F2FD',  // bleu très clair
+  green:   '#E8F5E9',  // vert très clair
+  orange:  '#FFF3E0',  // orange très clair
+  red:     '#FFEBEE'   // rouge très clair
+};
+const FONDS_VIFS = {
+  neutral: '#9E9E9E',
+  green:   '#00C853',
+  orange:  '#FF9800',
+  red:     '#F44336'
+};
+
+// ← choisis le look du fond ici :
+const FOND = FONDS_PASTEL;   // ou FONDS_VIFS si tu veux le fond “plein”
+
+const lights = Array.from(document.querySelectorAll('.light'));
+function setBG(name){
+  const color = FOND[name] || FOND.neutral;
+  document.documentElement.style.setProperty('--bg', color);
+  localStorage.setItem(FEU_KEY, name);
+  lights.forEach(b => b.classList.toggle('active', b.dataset.name === name));
+}
+
+// Restaure le dernier choix
+const saved = localStorage.getItem(FEU_KEY) || 'neutral';
+setBG(saved);
+
+// Écouteurs
+lights.forEach(b => {
+  b.addEventListener('click', () => setBG(b.dataset.name));
+});
   const savedBG = localStorage.getItem(FEU_KEY);
   if(savedBG) setBG(savedBG);
   lights.forEach(b=> b.addEventListener('click', ()=> setBG(b.getAttribute('data-bg')) ));
