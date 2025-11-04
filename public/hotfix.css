@@ -1,0 +1,44 @@
+
+/* === Hotfix visibilité + polices — 2025-11-04 === */
+:root{
+  --bg:#f6f8fb; --ink:#1f2a44; --panel:#ffffff; --accent:#5b7cfa;
+}
+html,body{ background:var(--bg) !important; color:var(--ink) !important; }
+/* Panels/cards par défaut lisibles */
+.panel,.card,.box,.tile,.container,.content,.sheet{
+  background:var(--panel) !important;
+  color:var(--ink) !important;
+}
+.panel *, .card *, .box *, .tile *, .container *, .content *, .sheet *{
+  color:inherit !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+/* Boutons visibles */
+button,.btn,[role="button"]{
+  background:#1f2a44 !important;
+  color:#fff !important;
+  border:0 !important;
+}
+.btn.primary,.button.primary,.cta{ background:var(--accent) !important; color:#fff !important; }
+/* Inputs */
+input,select,textarea{
+  color:#1f2a44 !important;
+  background:#fff !important;
+  border:1px solid #cbd5e1 !important;
+}
+input::placeholder,textarea::placeholder{ color:#6b7280 !important; }
+/* Désactiver les polices d'icônes héritées sur le texte */
+.panel *, .card *, .box *, .tile *, .container *, .content *, .sheet *{
+  font-variation-settings: normal !important;
+}
+/* Neutraliser : si une police d'icônes a fuité sur du texte */
+.material-symbols-outlined, .fa, [class*="fa-"]{
+  font-style: normal;
+}
+/* Sections probables : noms / récompenses / rôles */
+#noms, #recompenses, #roles, .panel-noms, .panel-recompenses, .panel-roles,
+#noms *, #recompenses *, #roles *, .panel-noms *, .panel-recompenses *, .panel-roles *{
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
+}
+/* Éviter mix-blend qui "efface" le texte */
+[class*="blend"], [style*="mix-blend-mode"]{ mix-blend-mode: normal !important; }
