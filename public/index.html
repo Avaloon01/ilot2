@@ -194,7 +194,38 @@
   if(savedBG) setBG(savedBG);
   lights.forEach(b=> b.addEventListener('click', ()=> setBG(b.getAttribute('data-bg')) ));
 
-  // --- State & Persistence ---
+  // --- State & Persistence (Cloud sync) ---
+  const SYNC_URL = '/api/state';
+  let saveTimer=null;
+  async function loadFromServer(){
+    try{
+      const r = await fetch(SYNC_URL, {credentials:'include'});
+      if(r.status===401){ /* not logged in -> keep local */ return; }
+      if(!r.ok) return;
+      const data = await r.json();
+      if(data && data.state && data.state.groups){
+        state = data.state;
+        // ensure lastId monotonic
+        state.lastId = state.lastId || (state.groups.reduce((m,g)=>Math.max(m,g.id||0),0));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+    }catch(e){ /* offline or no api */ }
+  }
+  async function saveToServer(){
+    try{
+      await fetch(SYNC_URL, {
+        method:'PUT',
+        headers:{'content-type':'application/json'},
+        credentials:'include',
+        body: JSON.stringify({state})
+      });
+    }catch(e){ /* offline -> ignore */ }
+  }
+  function debouncedServerSave(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveToServer, 500);
+  }
+
   const STORAGE_KEY = 'coop.barometre.v2';
   const DEFAULT_ROLES = ['Porte-parole','Vérificateur','Secrétaire','Gardien du temps','Animateur bienveillance'];
   const PRAISES = [
@@ -207,7 +238,7 @@
 
   let state = load() || { groups: [], history: [], lastId: 0 };
 
-  function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); renderChart(); }
+  function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); renderChart(); debouncedServerSave(); }
   function load(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)); }catch(e){ return null; } }
 
   const $ = sel => document.querySelector(sel);
@@ -537,7 +568,7 @@
   });
 
   // Init
-  render();
+  loadFromServer().then(()=>{ render(); });
 })();
 </script>
 </body>
