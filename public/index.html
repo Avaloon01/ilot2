@@ -23,7 +23,7 @@
   .panel{background:var(--panel); border-radius:16px; box-shadow:var(--shadow)}
   .sidebar{padding:14px}
   .sidebar h2{font-size:1rem; margin:10px 6px; color:var(--muted)}
-  .btn{appearance:none; border:1px solid #e5e7eb; background:#fff; color:#fff; padding:10px 12px; border-radius:12px; cursor:pointer; font-weight:600}
+  .btn{appearance:none; border:1px solid #e5e7eb; background:#fff; padding:10px 12px; border-radius:12px; cursor:pointer; font-weight:600}
   .btn:hover{box-shadow:0 2px 10px rgba(0,0,0,.06)}
   .btn.primary{background:var(--accent); border-color:transparent}
   .btn.ghost{background:transparent; border-color:transparent; color:#1f2a44}
@@ -519,5 +519,104 @@
   loadFromCloud();
 })();
 </script>
+
+<script id="fixrender">
+(function(){
+  // Safe, minimal renderer in case the inline script above fails.
+  function qs(s){ return document.querySelector(s); }
+  const grid = qs('#groups');
+  if(!grid) return;
+
+  function card(group){
+    const wrap = document.createElement('section');
+    wrap.className = 'card';
+    const head = document.createElement('header');
+    const title = document.createElement('div');
+    title.className = 'group-name';
+    title.textContent = group.name || 'Îlot';
+    head.appendChild(title);
+    wrap.appendChild(head);
+
+    // Stars / score
+    const stars = document.createElement('div');
+    stars.className = 'stars';
+    const starCount = document.createElement('span');
+    starCount.className = 'count';
+    starCount.textContent = (group.stars||0).toString();
+    stars.appendChild(starCount);
+    wrap.appendChild(stars);
+
+    // Members
+    const members = document.createElement('div');
+    members.className = 'members';
+    (group.members || []).forEach(n=>{
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.textContent = n;
+      members.appendChild(chip);
+    });
+    wrap.appendChild(members);
+
+    // Roles
+    if (group.roles) {
+      const roles = document.createElement('div');
+      roles.className = 'roles';
+      const lab = document.createElement('label');
+      lab.textContent = 'Rôles';
+      roles.appendChild(lab);
+      const row = document.createElement('div');
+      row.className = 'row';
+      Object.entries(group.roles).forEach(([role, name])=>{
+        const span = document.createElement('div');
+        span.className = 'chip';
+        span.textContent = role + ' : ' + (name||'—');
+        row.appendChild(span);
+      });
+      roles.appendChild(row);
+      wrap.appendChild(roles);
+    }
+    return wrap;
+  }
+
+  function render(state){
+    grid.innerHTML = '';
+    if(!state || !Array.isArray(state.groups) || state.groups.length===0){
+      const empty = document.createElement('p');
+      empty.className = 'hint';
+      empty.textContent = "Ajoute un îlot dans la colonne de gauche pour l'afficher ici.";
+      grid.appendChild(empty);
+      return;
+    }
+    state.groups.forEach(g=>grid.appendChild(card(g)));
+  }
+
+  async function boot(){
+    try{
+      const r = await fetch('/api/state', { method:'GET' });
+      if(r.status===401){ location.href='/login.html'; return; }
+      const data = await r.json();
+      if(data && data.ok){
+        render(data.state||{groups:[]});
+        return;
+      }
+    }catch(e){}
+    // Fallback: try localStorage
+    try{
+      const raw = localStorage.getItem('coop.barometre.v2.local');
+      const s = raw ? JSON.parse(raw) : null;
+      render(s||{groups:[]});
+    }catch(e){
+      render({groups:[]});
+    }
+  }
+  // Defer so it runs after previous inline script (even if it crashed)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    setTimeout(boot, 0);
+  }
+})();
+</script>
+
 </body>
 </html>
